@@ -1,19 +1,18 @@
 import ui
 import connector
 import scp_handler
-import warnings
+from colorama import Fore, Style
 
-warnings.filterwarnings("ignore", category=SyntaxWarning)   #temp fix for colored printing for ui 
 
 def main():
     ui.print_ban()
     user, host, password = connector.getconn()
 
     if connector.test_ssh(user, host, password):
-        print("Connected!")
+        print(Fore.GREEN + "Connected!" + Style.RESET_ALL)
         scp_handler.smenu(user, host, password)
     else:
-        print("Connection Failed.")
+        print(Fore.RED + "Connection Failed." + Style.RESET_ALL)
 
 if __name__ == '__main__':
     main()

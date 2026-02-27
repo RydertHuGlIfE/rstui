@@ -1,10 +1,13 @@
 import subprocess
 import getpass
+from colorama import Fore, Style
+import colorama
+colorama.init(autoreset=True)
 
 def getconn():
-    user     = input("Username: ").strip()
-    host     = input("Host/IP:  ").strip()
-    password = getpass.getpass("Password: ")
+    user     = input(Fore.CYAN + "Username: " + Style.RESET_ALL).strip()
+    host     = input(Fore.CYAN + "Host/IP:  " + Style.RESET_ALL).strip()
+    password = getpass.getpass(Fore.CYAN + "Password: " + Style.RESET_ALL)
     return user, host, password
 
 def test_ssh(user, host, password):
