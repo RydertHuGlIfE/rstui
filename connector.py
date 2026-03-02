@@ -36,7 +36,8 @@ def read_profiles():
         print(f"{idx}: {profile['name']}")
 
     try:
-        choice = int(input("\nSelect profile number: "))
+        print(Fore.YELLOW + "\nSelect profile number: " + Style.RESET_ALL)
+        choice = int(input())
         if 1 <= choice <= len(profiles):
             p = profiles[choice - 1]
             return p["user"], p["host"], p["password"]

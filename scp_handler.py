@@ -60,20 +60,26 @@ def smenu(user, host, password):
             "host": host,
             "password": password
         }
-        
         try:
             with open("profiles.json", "r") as f:
                 data = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
             data = {"profiles": []}
 
+        for profile in data["profiles"]:
+            if profile["host"] == host and profile["user"] == user:
+                print(Fore.RED + "Profile with this host and user already exists." + Style.RESET_ALL)
+                return 
+
         data["profiles"].append(new_profile)
 
         with open("profiles.json", "w") as f:
             json.dump(data, f, indent=4)
-            
+
+        
         print(Fore.GREEN + "Profile Added Successfully!" + Style.RESET_ALL)
         return 
+
         
     elif choice == "4":
         exit()
