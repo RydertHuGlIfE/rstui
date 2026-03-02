@@ -33,7 +33,7 @@ def read_profiles():
 
     print("\n--- Available Profiles ---")
     for idx, profile in enumerate(profiles, 1):
-        print(f"{idx}: {profile['name']} ({profile['user']}@{profile['host']})")
+        print(f"{idx}: {profile['name']}")
 
     try:
         choice = int(input("\nSelect profile number: "))
