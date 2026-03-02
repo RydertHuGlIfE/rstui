@@ -4,7 +4,7 @@ import sys
 import re
 from colorama import Fore, Style
 import tuibrow
-
+import getpass
 
 current_file = "Init..."
 
@@ -34,8 +34,9 @@ def smenu(user, host, password):
     print("\nMenu...")
     print("1. Upload")
     print("2. Download")
-    print("3. Exit")
-    choice = input("Enter your choice: [1/2/3]: ")
+    print("3. Add Current Profile")
+    print("4. Exit")
+    choice = input("Enter your choice: [1/2/3/4]: ")
 
     if choice == "1":
         local_path  = tuibrow.browse_local_any()
@@ -50,6 +51,16 @@ def smenu(user, host, password):
         cmd = ["rsync", "-avz", "--progress", "-e", f"sshpass -p {password} ssh", f"{user}@{host}:{remote_path}", local_path]
 
     elif choice == "3":
+        print("Add Current Profile")
+        user = user
+        host = host
+        password = password
+        with open("profiles.json", "a") as f:
+            f.write(f"{user}:{host}:{password}\n")
+        print(Fore.GREEN + "Profile Added!" + Style.RESET_ALL)
+        return 
+        
+    elif choice == "4":
         exit()
 
     else:
