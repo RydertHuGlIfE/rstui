@@ -2,6 +2,7 @@ import subprocess
 import getpass
 from colorama import Fore, Style
 import colorama
+import json
 colorama.init(autoreset=True)
 
 def getconn():
@@ -15,3 +16,36 @@ def test_ssh(user, host, password):
         ["sshpass", "-p", password, "ssh", f"{user}@{host}", "exit"]
     )
     return result.returncode == 0
+
+
+def read_profiles():
+    try:
+        with open("profiles.json", "r") as f:
+            data = json.load(f)
+            profiles = data.get("profiles", [])
+    except (FileNotFoundError, json.JSONDecodeError):
+        print(Fore.RED + "No profiles found or file is empty." + Style.RESET_ALL)
+        return None
+
+    if not profiles:
+        print(Fore.YELLOW + "No profiles available." + Style.RESET_ALL)
+        return None
+
+    print("\n--- Available Profiles ---")
+    for idx, profile in enumerate(profiles, 1):
+        print(f"{idx}: {profile['name']}")
+
+    try:
+        print(Fore.YELLOW + "\nSelect profile number: " + Style.RESET_ALL)
+        choice = int(input())
+        if 1 <= choice <= len(profiles):
+            p = profiles[choice - 1]
+            return p["user"], p["host"], p["password"]
+        else:
+            print(Fore.RED + "Invalid selection." + Style.RESET_ALL)
+    except ValueError:
+        print(Fore.RED + "Please enter a valid number." + Style.RESET_ALL)
+
+    return None
+        
+

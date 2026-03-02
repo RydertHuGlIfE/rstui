@@ -1,8 +1,14 @@
+import os
 import subprocess
 import sys
 import re
+import json
 from colorama import Fore, Style
 import tuibrow
+import getpass
+
+current_file = "Init..."
+
 
 def run_with_progress(cmd):
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
@@ -11,9 +17,10 @@ def run_with_progress(cmd):
         if match:
             percent = int(match.group(1))
             speed = match.group(2)
+            display_name = current_file[:20] + "..." if len(current_file) > 20 else current_file
             bar_filled = percent // 2
             bar_empty = 50 - bar_filled
-            sys.stdout.write(f"\r[{'█' * bar_filled}{' ' * bar_empty}] {percent}% | {speed}")
+            sys.stdout.write(f"\r[{'█' * bar_filled}{' ' * bar_empty}] {percent}% | {speed} | {display_name}")
             sys.stdout.flush()
     process.wait()
     sys.stdout.write("\r" + " " * 70 + "\r")
@@ -24,23 +31,57 @@ def run_with_progress(cmd):
         print(Fore.RED + "Transfer Failed." + Style.RESET_ALL)
 
 def smenu(user, host, password):
+    global current_file
     print("\nMenu...")
     print("1. Upload")
     print("2. Download")
-    print("3. Exit")
-    choice = input("Enter your choice: [1/2/3]: ")
+    print("3. Add Current Profile")
+    print("4. Exit")
+    choice = input("Enter your choice: [1/2/3/4]: ")
 
     if choice == "1":
         local_path  = tuibrow.browse_local_any()
         remote_path = tuibrow.browse_remote_folder(user, host, password)
+        current_file = os.path.basename(local_path)
         cmd = ["rsync", "-avz", "--progress", "-e", f"sshpass -p {password} ssh", local_path, f"{user}@{host}:{remote_path}"]
 
     elif choice == "2":
         remote_path = tuibrow.browse_remote_any(user, host, password)
         local_path  = tuibrow.browse_local_folder()
+        current_file = os.path.basename(remote_path)
         cmd = ["rsync", "-avz", "--progress", "-e", f"sshpass -p {password} ssh", f"{user}@{host}:{remote_path}", local_path]
 
     elif choice == "3":
+        print("Add Current Profile")
+        profile_name = input("Enter a name for this profile: ").strip() or f"Profile_{host}"
+        new_profile = {
+            "name": profile_name,
+            "user": user,
+            "host": host,
+            "password": password
+        }
+        try:
+            with open("profiles.json", "r") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            data = {"profiles": []}
+
+        for profile in data["profiles"]:
+            if profile["host"] == host and profile["user"] == user:
+                print(Fore.RED + "Profile with this host and user already exists." + Style.RESET_ALL)
+                return 
+
+        data["profiles"].append(new_profile)
+
+        with open("profiles.json", "w") as f:
+            json.dump(data, f, indent=4)
+
+        
+        print(Fore.GREEN + "Profile Added Successfully!" + Style.RESET_ALL)
+        return 
+
+        
+    elif choice == "4":
         exit()
 
     else:

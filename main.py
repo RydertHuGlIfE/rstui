@@ -8,9 +8,37 @@ import time,sys
 
 spinchar = ['|', '/', '-', '\\']
 
+
+
+
+def simmenu():
+    print("\n Connection Menu... ")
+    print("1: Connect to existing Profile: ")
+    print("2: New Connection")
+    print("3: Exit")
+    choice = input("Enter your choice: [1/2/3]: ")
+
+    if choice == "1":
+        profile_data = connector.read_profiles()
+        if profile_data:
+            return profile_data
+        return "","",""
+    if choice == "2":
+        user, host, password = connector.getconn()
+        return user, host, password
+    if choice == "3":
+        exit()
+        
+
 def main():
     ui.print_ban()
-    user, host, password = connector.getconn()
+
+    conn_data = simmenu()
+
+    if conn_data == ["","",""] or conn_data is None:
+        return
+
+    user, host, password = conn_data
 
     result = []
     def ssh_wrapper():
