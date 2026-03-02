@@ -2,6 +2,7 @@ import os
 import subprocess
 import sys
 import re
+import json
 from colorama import Fore, Style
 import tuibrow
 import getpass
@@ -52,12 +53,26 @@ def smenu(user, host, password):
 
     elif choice == "3":
         print("Add Current Profile")
-        user = user
-        host = host
-        password = password
-        with open("profiles.json", "a") as f:
-            f.write(f"{user}:{host}:{password}\n")
-        print(Fore.GREEN + "Profile Added!" + Style.RESET_ALL)
+        profile_name = input("Enter a name for this profile: ").strip() or f"Profile_{host}"
+        new_profile = {
+            "name": profile_name,
+            "user": user,
+            "host": host,
+            "password": password
+        }
+        
+        try:
+            with open("profiles.json", "r") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            data = {"profiles": []}
+
+        data["profiles"].append(new_profile)
+
+        with open("profiles.json", "w") as f:
+            json.dump(data, f, indent=4)
+            
+        print(Fore.GREEN + "Profile Added Successfully!" + Style.RESET_ALL)
         return 
         
     elif choice == "4":

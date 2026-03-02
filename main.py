@@ -9,6 +9,10 @@ import time,sys
 spinchar = ['|', '/', '-', '\\']
 
 
+def conn_existing_profile():
+    connector.read_profiles()
+
+
 def simmenu():
     print("\n Connection Menu... ")
     print("1: Connect to existing Profile: ")

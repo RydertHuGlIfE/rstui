@@ -2,6 +2,7 @@ import subprocess
 import getpass
 from colorama import Fore, Style
 import colorama
+import json
 colorama.init(autoreset=True)
 
 def getconn():
@@ -15,3 +16,11 @@ def test_ssh(user, host, password):
         ["sshpass", "-p", password, "ssh", f"{user}@{host}", "exit"]
     )
     return result.returncode == 0
+
+
+def read_profiles():
+    with open("profiles.json", "r") as f:
+        data = json.load(f)
+        for profile in data["profiles"]:
+            print(profile["name"])
+
