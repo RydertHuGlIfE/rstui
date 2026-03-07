@@ -47,5 +47,42 @@ def read_profiles():
         print(Fore.RED + "Please enter a valid number." + Style.RESET_ALL)
 
     return None
+
+def delete_profile():
+    try:
+        with open("profiles.json", "r") as f:
+            data = json.load(f)
+            profiles = data.get("profiles", [])
+    except (FileNotFoundError, json.JSONDecodeError):
+        print(Fore.RED + "No Profiles found or file is empty" + Style.RESET_ALL)
+        return None
+
+    if not profiles:
+        print(Fore.YELLOW + "No profiles available" + Style.RESET_ALL)
+        return None 
+
+    print("\n--- Available Profiles ---")
+    for idx, profile in enumerate(profiles, 1):
+        print(f"{idx}: {profile['name']}")
+
+    
+    try:
+        print(Fore.YELLOW + "\nSelect Profile Number: " + Style.RESET_ALL)
+        choice = int(input())
+        if 1 <= choice <= len(profiles):
+            p = profiles[choice-1]
+            profiles.remove(p)
+            with open("profiles.json", "w") as f:
+                json.dump(data, f, indent=4)
+            print(Fore.GREEN + "Profile Deleted Successfully!" + Style.RESET_ALL)
+            return None
+        else:
+            print(Fore.RED + "Invalid selection." + Style.RESET_ALL)
+            return None
+    except ValueError:
+        print(Fore.RED + "Please enter a valid number." + Style.RESET_ALL)
+        return None
+
+    return None
         
 

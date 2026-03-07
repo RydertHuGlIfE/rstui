@@ -9,14 +9,13 @@ import time,sys
 spinchar = ['|', '/', '-', '\\']
 
 
-
-
 def simmenu():
     print("\n Connection Menu... ")
     print("1: Connect to existing Profile: ")
-    print("2: New Connection")
-    print("3: Exit")
-    choice = input("Enter your choice: [1/2/3]: ")
+    print("2: Delete an existing Profiles: ")
+    print("3: New Connection")
+    print("4: Exit")
+    choice = input("Enter your choice: [1/2/3/4]: ")
 
     if choice == "1":
         profile_data = connector.read_profiles()
@@ -24,9 +23,12 @@ def simmenu():
             return profile_data
         return "","",""
     if choice == "2":
+        connector.delete_profile()
+        return "","",""
+    if choice == "3":
         user, host, password = connector.getconn()
         return user, host, password
-    if choice == "3":
+    if choice == "4":
         exit()
         
 
